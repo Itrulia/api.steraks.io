@@ -1,0 +1,44 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Application Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register all of the routes for an application.
+| It's a breeze. Simply tell Laravel the URIs it should respond to
+| and give it the controller to call when that URI is requested.
+|
+*/
+
+Route::post('login', 'LoginController@login');
+Route::post('logout', 'LoginController@logout');
+
+Route::resource('user', 'API\UserController');
+Route::group(['prefix' => '/user/{user}'], function () {
+    Route::get('following', 'API\UserController@getFollowing');
+});
+
+Route::group(['prefix' => '/summoner/{summonerId}'], function () {
+    Route::get('/', 'API\SummonerController@getSummoner');
+    Route::get('rank', 'API\SummonerController@getRank');
+    Route::get('matches', 'API\SummonerController@getMatches');
+    Route::get('runes', 'API\SummonerController@getRunes');
+    Route::get('masteries', 'API\SummonerController@getMasteries');
+    Route::get('stats', 'API\SummonerController@getStats');
+
+    // follow
+    Route::post('follow', 'API\SummonerController@follow');
+    Route::delete('follow', 'API\SummonerController@unfollow');
+});
+
+Route::group(['prefix' => '/static'], function () {
+    Route::get('/champion', 'API\StaticController@getChampions');
+    Route::get('/item', 'API\StaticController@getItems');
+    Route::get('/summoner-spell', 'API\StaticController@getSummonerSpells');
+    Route::get('/realm', 'API\StaticController@getRealm');
+});
+
+Route::group(['prefix' => '/match/{matchId}'], function () {
+    Route::get('/', 'API\MatchController@getMatch');
+});

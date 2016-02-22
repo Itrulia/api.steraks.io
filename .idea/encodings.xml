@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/200.jade" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/_reference.d.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/app.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/resource/MatchResource.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/resource/RankingStatsResource.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/resource/StaticResource.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/resource/SummonerResource.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/service/MatchService.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/summoner/SummonerController.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/summoner/SummonerMatchHistoryController.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/summoner/SummonerProfileController.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/scripts/app/summoner/summoner.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/app/templates/components/match-summary.jade" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/gulpfile.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/package.json" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Github/MatchHistory/typings.json" charset="UTF-8" />
+  </component>
+</project>
