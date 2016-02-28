@@ -14,7 +14,6 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\AccessControlAllowHeader::class,
         \App\Http\Middleware\Authenticate::class,
         \App\Http\Middleware\AuthenticationTokenHeader::class,
-        \Clockwork\Support\Laravel\ClockworkMiddleware::class,
     ];
 
     /**
