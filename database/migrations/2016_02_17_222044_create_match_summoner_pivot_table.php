@@ -17,6 +17,8 @@ class CreateMatchSummonerPivotTable extends Migration
             $table->foreign('matchId')->references('matchId')->on('matches')->onDelete('cascade');
             $table->integer('summonerId')->unsigned()->index();
             $table->integer('championId')->unsigned()->index();
+            $table->integer('teamId')->unsigned()->index();
+            $table->boolean('winner');
 
             $table->primary(['matchId', 'summonerId', 'championId']);
         });

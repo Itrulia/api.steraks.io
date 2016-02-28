@@ -28,6 +28,44 @@ class StaticRepository extends Repository
     /**
      * @return mixed
      */
+    public function getRunes() {
+        $cacheKey = 'static:runes';
+        $cache = $this->cache;
+
+        return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
+            $res = $this->client->request('GET', $this->baseurl . '/static/rune', [
+                'query' => ['region' => 'EUW']
+            ]);
+
+            $res = json_decode($res->getBody());
+            $cache->put($cacheKey, $res, 60*24);
+
+            return $res;
+        });
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMasteries() {
+        $cacheKey = 'static:masteries';
+        $cache = $this->cache;
+
+        return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
+            $res = $this->client->request('GET', $this->baseurl . '/static/mastery', [
+                'query' => ['region' => 'EUW']
+            ]);
+
+            $res = json_decode($res->getBody());
+            $cache->put($cacheKey, $res, 60*24);
+
+            return $res;
+        });
+    }
+
+    /**
+     * @return mixed
+     */
     public function getItems() {
         $cacheKey = 'static:items';
         $cache = $this->cache;

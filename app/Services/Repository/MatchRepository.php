@@ -18,7 +18,7 @@ class MatchRepository extends Repository
         }))[0]->teamId;
 
         $match = Match::create([
-            'matchId'  => $data->matchId,
+            'matchId'   => $data->matchId,
             'region'    => $data->region,
             'timestamp' => $data->matchCreation,
             'version'   => $data->matchVersion,
@@ -27,7 +27,18 @@ class MatchRepository extends Repository
             'data'      => json_encode($data)
         ]);
 
-        // todo: match/champion/summoner table
+        $relations = [];
+        foreach ($data->participants as $participant) {
+            $relations[] = [
+                'summonerId' => $participant->player->summonerId,
+                'championId' => $participant->championId,
+                'teamId'     => $participant->teamId,
+                'matchId'    => $data->matchId,
+                'winner'     => $winner == $participant->teamId
+            ];
+        }
+
+        \DB::table('match_summoner_champion')->insert($relations);
 
         return $match;
     }
@@ -61,6 +72,7 @@ class MatchRepository extends Repository
             $res = $this->client->request('GET', $this->baseurl . '/match/' . implode(',', $missingMatches), [
                 'query' => ['region' => $region]
             ]);
+
             $res = json_decode($res->getBody());
 
             if (!is_array($res)) {

@@ -27,16 +27,22 @@ Route::group(['prefix' => '/summoner/{summonerId}'], function () {
     Route::get('masteries', 'API\SummonerController@getMasteries');
     Route::get('stats', 'API\SummonerController@getStats');
 
+    // counter
+    Route::get('counters', 'API\SummonerController@counters');
+    Route::get('synergy', 'API\SummonerController@synergy');
+
     // follow
     Route::post('follow', 'API\SummonerController@follow');
     Route::delete('follow', 'API\SummonerController@unfollow');
 });
 
 Route::group(['prefix' => '/static'], function () {
-    Route::get('/champion', 'API\StaticController@getChampions');
-    Route::get('/item', 'API\StaticController@getItems');
-    Route::get('/summoner-spell', 'API\StaticController@getSummonerSpells');
-    Route::get('/realm', 'API\StaticController@getRealm');
+    Route::get('rune', 'API\StaticController@getRunes');
+    Route::get('mastery', 'API\StaticController@getMasteries');
+    Route::get('champion', 'API\StaticController@getChampions');
+    Route::get('item', 'API\StaticController@getItems');
+    Route::get('summoner-spell', 'API\StaticController@getSummonerSpells');
+    Route::get('realm', 'API\StaticController@getRealm');
 });
 
 Route::group(['prefix' => '/match/{matchId}'], function () {
