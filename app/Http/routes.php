@@ -19,21 +19,23 @@ Route::group(['prefix' => '/user/{user}'], function () {
     Route::get('following', 'API\UserController@getFollowing');
 });
 
-Route::group(['prefix' => '/summoner/{summonerId}'], function () {
-    Route::get('/', 'API\SummonerController@getSummoner');
-    Route::get('rank', 'API\SummonerController@getRank');
-    Route::get('matches', 'API\SummonerController@getMatches');
-    Route::get('runes', 'API\SummonerController@getRunes');
-    Route::get('masteries', 'API\SummonerController@getMasteries');
-    Route::get('stats', 'API\SummonerController@getStats');
+Route::group(['prefix' => '{region}'], function () {
+    Route::group(['prefix' => 'match/{matchId}'], function () {
+        Route::get('/', 'API\MatchController@getMatch');
+    });
 
-    // counter
-    Route::get('counters', 'API\SummonerController@counters');
-    Route::get('synergy', 'API\SummonerController@synergy');
+    Route::group(['prefix' => 'summoner/{summonerId}'], function () {
+        Route::get('/', 'API\SummonerController@getSummoner');
+        Route::get('rank', 'API\SummonerController@getRank');
+        Route::get('matches', 'API\SummonerController@getMatches');
+        Route::get('runes', 'API\SummonerController@getRunes');
+        Route::get('masteries', 'API\SummonerController@getMasteries');
+        Route::get('stats', 'API\SummonerController@getStats');
 
-    // follow
-    Route::post('follow', 'API\SummonerController@follow');
-    Route::delete('follow', 'API\SummonerController@unfollow');
+        // counter
+        Route::get('counters', 'API\SummonerController@counters');
+        Route::get('synergy', 'API\SummonerController@synergy');
+    });
 });
 
 Route::group(['prefix' => '/static'], function () {
@@ -45,6 +47,3 @@ Route::group(['prefix' => '/static'], function () {
     Route::get('realm', 'API\StaticController@getRealm');
 });
 
-Route::group(['prefix' => '/match/{matchId}'], function () {
-    Route::get('/', 'API\MatchController@getMatch');
-});

@@ -34,7 +34,8 @@ class MatchRepository extends Repository
                 'championId' => $participant->championId,
                 'teamId'     => $participant->teamId,
                 'matchId'    => $data->matchId,
-                'winner'     => $winner == $participant->teamId
+                'winner'     => $winner == $participant->teamId,
+                'region'     => $data->region,
             ];
         }
 

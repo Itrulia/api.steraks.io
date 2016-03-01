@@ -13,6 +13,7 @@ class CreateMatchSummonerPivotTable extends Migration
     public function up()
     {
         Schema::create('match_summoner_champion', function (Blueprint $table) {
+            $table->string('region');
             $table->integer('matchId')->unsigned()->index();
             $table->foreign('matchId')->references('matchId')->on('matches')->onDelete('cascade');
             $table->integer('summonerId')->unsigned()->index();

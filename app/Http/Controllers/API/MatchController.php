@@ -5,8 +5,8 @@ use App\Services\Repository\MatchRepository;
 
 class MatchController extends Controller
 {
-    public function getMatch($matchId, MatchRepository $repository)
+    public function getMatch(MatchRepository $repository, $region, $matchId)
     {
-        return $repository->get(explode(',', $matchId), 'EUW');
+        return $repository->get(explode(',', $matchId), $region);
     }
 }
