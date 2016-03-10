@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
         $client->attach([
             'text' =>  $e->getMessage(),
             'color' => 'danger',
-        ])->send(get_class($e) . ' @ ' .  $e->getFile() . ':' . $e->getLine());
+            ])->send(get_class($e) . ' @ ' .  $e->getFile() . ':' . $e->getLine());
 
         parent::report($e);
     }

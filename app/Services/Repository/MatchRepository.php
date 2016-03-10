@@ -1,11 +1,29 @@
 <?php namespace App\Services\Repository;
 
 use App\Match;
-use App\Summoner;
+use App\Services\Data\MatchService;
+use GuzzleHttp\Client;
+use Illuminate\Cache\Repository as Cache;
 use Illuminate\Database\Eloquent\Collection;
 
 class MatchRepository extends Repository
 {
+    /**
+     * @var \App\Services\Data\MatchService
+     */
+    protected $service;
+
+    /**
+     * @param \GuzzleHttp\Client $client
+     * @param \Illuminate\Cache\Repository $cache
+     * @param \App\Services\Data\MatchService $service
+     */
+    public function __construct(Client $client, Cache $cache, MatchService $service)
+    {
+        $this->service = $service;
+        parent::__construct($client, $cache);
+    }
+
     /**
      * @param $data
      *
@@ -88,6 +106,10 @@ class MatchRepository extends Repository
                 return $match1->matchCreation - $match2->matchCreation;
             });
         }
+
+        $matches->each(function(Match $match) {
+            $match = $this->service->setMatch($match);
+        });
 
         if (count($matchIds) === 1) {
             $matches = $matches->first();

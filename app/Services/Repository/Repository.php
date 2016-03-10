@@ -1,5 +1,6 @@
 <?php namespace App\Services\Repository;
 
+use App\Services\Data\StaticService;
 use GuzzleHttp\Client;
 use Illuminate\Cache\Repository as Cache;
 
@@ -22,7 +23,7 @@ abstract class Repository
 
     /**
      * @param \GuzzleHttp\Client $client
-     * @param Cache $cache
+     * @param \Illuminate\Cache\Repository $cache
      */
     public function __construct(Client $client, Cache $cache)
     {
