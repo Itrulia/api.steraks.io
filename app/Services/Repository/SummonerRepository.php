@@ -165,7 +165,8 @@ class SummonerRepository extends Repository
      *
      * @return array
      */
-    public function getCounters($summonerId, $region) {
+    public function getCounters($summonerId, $region)
+    {
         $cacheKey = 'summoner:' . $summonerId . ':' . $region . ':counters';
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
@@ -193,6 +194,7 @@ class SummonerRepository extends Repository
                 if (!isset($champions[$game->championId])) {
                     $champions[$game->championId] = [
                         'championId' => $game->championId,
+                        'matchIds'   => [],
                         'games'      => 0,
                         'wins'       => 0,
                         'losses'     => 0
@@ -201,6 +203,7 @@ class SummonerRepository extends Repository
                     list($champions[$game->championId]['championName'], $champions[$game->championId]['championAvatar']) = $this->service->getChampionData($game->championId);
                 }
 
+                $champions[$game->championId]['matchIds'][] = $game->matchId;
                 $champions[$game->championId]['games']++;
 
                 if (!$game->winner) {
@@ -226,7 +229,8 @@ class SummonerRepository extends Repository
      *
      * @return array
      */
-    public function getSynergies($summonerId, $region) {
+    public function getSynergies($summonerId, $region)
+    {
         $cacheKey = 'summoner:' . $summonerId . ':' . $region . ':synergies';
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
@@ -255,6 +259,7 @@ class SummonerRepository extends Repository
                 if (!isset($champions[$game->championId])) {
                     $champions[$game->championId] = [
                         'championId' => $game->championId,
+                        'matchIds'   => [],
                         'games'      => 0,
                         'wins'       => 0,
                         'losses'     => 0
@@ -263,6 +268,7 @@ class SummonerRepository extends Repository
                     list($champions[$game->championId]['championName'], $champions[$game->championId]['championAvatar']) = $this->service->getChampionData($game->championId);
                 }
 
+                $champions[$game->championId]['matchIds'][] = $game->matchId;
                 $champions[$game->championId]['games']++;
 
                 if ($game->winner) {
