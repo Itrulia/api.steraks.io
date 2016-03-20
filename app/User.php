@@ -10,6 +10,18 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Auth;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 
+/**
+ * App\User
+ *
+ * @property integer $id
+ * @property string $email
+ * @property integer $summonerId
+ * @property string $region
+ * @property string $password
+ * @property string $remember_token
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
     use Authenticatable, Authorizable, CanResetPassword, ThrottlesLogins;

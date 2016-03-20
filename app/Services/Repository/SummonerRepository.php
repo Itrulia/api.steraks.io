@@ -130,6 +130,7 @@ class SummonerRepository extends Repository
             ]);
 
             $res = json_decode($res->getBody());
+            $res = $this->service->setStats($res);
             $this->cache->put($cacheKey, $res, 15);
 
             return $res;

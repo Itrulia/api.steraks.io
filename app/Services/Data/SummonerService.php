@@ -21,6 +21,25 @@ class SummonerService extends StaticService
     }
 
     /**
+     * @param array $stats
+     *
+     * @return array
+     */
+    public function setStats(array $stats)
+    {
+        foreach ($stats as $key => $stat) {
+            if ($stat->id === 0) continue;
+
+            list(
+                $stats[$key]->championName,
+                $stats[$key]->championAvatar
+            ) = $this->getChampionData($stat->id);
+        }
+
+        return $stats;
+    }
+
+    /**
      * @param array $runePages
      *
      * @return array

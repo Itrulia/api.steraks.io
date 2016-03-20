@@ -21,6 +21,7 @@ Route::group(['prefix' => '/user/{user}'], function () {
 
 Route::group(['prefix' => '{region}'], function () {
     Route::group(['prefix' => 'match/{matchId}'], function () {
+        Route::get('{summonerId}', 'API\MatchController@getMatchForSummoner');
         Route::get('/', 'API\MatchController@getMatch');
     });
 

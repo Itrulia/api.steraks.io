@@ -4,6 +4,35 @@ use App\Services\Repository\StaticRepository;
 
 class StaticService
 {
+    /**
+     * @var \stdClass
+     */
+    protected $realmData;
+
+    /**
+     * @var \stdClass
+     */
+    protected $masteryData;
+
+    /**
+     * @var \stdClass
+     */
+    protected $champData;
+
+    /**
+     * @var \stdClass
+     */
+    protected $runeData;
+
+    /**
+     * @var \stdClass
+     */
+    protected $itemData;
+
+    /**
+     * @var \stdClass
+     */
+    protected $summonerSpellData;
 
     /**
      * @var \App\Services\Repository\StaticRepository
@@ -25,13 +54,18 @@ class StaticService
      */
     public function getChampionData($championId)
     {
-        $realm = $this->repository->getRealm();
-        $champions = $this->repository->getChampions();
+        if (is_null($this->realmData)) {
+            $this->realmData = $this->repository->getRealm();
+        }
 
-        if (isset($champions->$championId)) {
+        if (is_null($this->champData)) {
+            $this->champData = $this->repository->getChampions();
+        }
+
+        if (isset($this->champData->$championId)) {
             return [
-                $champions->$championId->name,
-                $realm->cdn . '/' . $realm->dd . '/img/champion/' . $champions->$championId->image->full,
+                $this->champData->$championId->name,
+                $this->realmData->cdn . '/' . $this->realmData->dd . '/img/champion/' . $this->champData->$championId->image->full,
             ];
         }
 
@@ -45,14 +79,19 @@ class StaticService
      */
     public function getMasteryData($masteryId)
     {
-        $realm = $this->repository->getRealm();
-        $masteries = $this->repository->getMasteries();
+        if (is_null($this->realmData)) {
+            $this->realmData = $this->repository->getRealm();
+        }
 
-        if (isset($masteries->data->$masteryId)) {
+        if (is_null($this->masteryData)) {
+            $this->masteryData = $this->repository->getMasteries();
+        }
+
+        if (isset($this->masteryData->data->$masteryId)) {
             return [
-                $masteries->data->$masteryId->name,
-                $masteries->data->$masteryId->description,
-                $realm->cdn . '/' . $realm->dd . '/img/mastery/' . $masteries->data->$masteryId->image->full,
+                $this->masteryData->data->$masteryId->name,
+                $this->masteryData->data->$masteryId->description,
+                $this->realmData->cdn . '/' . $this->realmData->dd . '/img/mastery/' . $this->masteryData->data->$masteryId->image->full,
             ];
         }
 
@@ -66,14 +105,19 @@ class StaticService
      */
     public function getRuneData($runeId)
     {
-        $realm = $this->repository->getRealm();
-        $runes = $this->repository->getRunes();
+        if (is_null($this->realmData)) {
+            $this->realmData = $this->repository->getRealm();
+        }
 
-        if (isset($runes->$runeId)) {
+        if (is_null($this->runeData)) {
+            $this->runeData = $this->repository->getRunes();
+        }
+
+        if (isset($this->runeData->$runeId)) {
             return [
-                $runes->$runeId->name,
-                $runes->$runeId->description,
-                $realm->cdn . '/' . $realm->dd . '/img/rune/' . $runes->$runeId->image->full,
+                $this->runeData->$runeId->name,
+                $this->runeData->$runeId->description,
+                $this->realmData->cdn . '/' . $this->realmData->dd . '/img/rune/' . $this->runeData->$runeId->image->full,
             ];
         }
 
@@ -81,13 +125,18 @@ class StaticService
     }
 
     public function getSummonerSpellData($spellId) {
-        $realm = $this->repository->getRealm();
-        $spells = $this->repository->getSummonerSpells();
+        if (is_null($this->realmData)) {
+            $this->realmData = $this->repository->getRealm();
+        }
 
-        if (isset($spells->$spellId)) {
+        if (is_null($this->summonerSpellData)) {
+            $this->summonerSpellData = $this->repository->getSummonerSpells();
+        }
+
+        if (isset($this->summonerSpellData->$spellId)) {
             return [
-                $spells->$spellId->name,
-                $realm->cdn . '/' . $realm->dd . '/img/spell/' . $spells->$spellId->image->full,
+                $this->summonerSpellData->$spellId->name,
+                $this->realmData->cdn . '/' . $this->realmData->dd . '/img/spell/' . $this->summonerSpellData->$spellId->image->full,
             ];
         }
 
@@ -95,13 +144,18 @@ class StaticService
     }
 
     public function getItemData($itemId) {
-        $realm = $this->repository->getRealm();
-        $items = $this->repository->getItems();
+        if (is_null($this->realmData)) {
+            $this->realmData = $this->repository->getRealm();
+        }
 
-        if (isset($items->$itemId)) {
+        if (is_null($this->itemData)) {
+            $this->itemData = $this->repository->getItems();
+        }
+
+        if (isset($this->itemData->$itemId)) {
             return [
-                $items->$itemId->name,
-                $realm->cdn . '/' . $realm->dd . '/img/item/' . $items->$itemId->image->full,
+                $this->itemData->$itemId->name,
+                $this->realmData->cdn . '/' . $this->realmData->dd . '/img/item/' . $this->itemData->$itemId->image->full,
             ];
         }
 

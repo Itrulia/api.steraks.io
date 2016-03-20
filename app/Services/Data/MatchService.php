@@ -11,6 +11,7 @@ class MatchService extends StaticService
             $participant = $this->setChampionData($participant);
             $participant = $this->setSummonerSpellData($participant);
             $participant = $this->setItemData($participant);
+            $participant = $this->setMasteryData($participant);
         }
 
         $match->data = json_encode($matchData);
@@ -47,6 +48,23 @@ class MatchService extends StaticService
             $participant->spell1Name,
             $participant->spell1Avatar
         ) = $this->getSummonerSpellData($participant->spell1Id);
+
+        return $participant;
+    }
+
+    /**
+     * @param $participant
+     *
+     * @return mixed
+     */
+    protected function setMasteryData($participant) {
+        foreach($participant->masteries as $mastery) {
+            list(
+                $mastery->masteryName,
+                $mastery->masteryDescription,
+                $mastery->masteryAvatar
+            ) = $this->getMasteryData($mastery->masteryId);
+        }
 
         return $participant;
     }
