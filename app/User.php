@@ -39,8 +39,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'summonerId',
-        'region',
         'email',
         'password'
     ];
@@ -59,8 +57,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $visible = [
         'id',
-        'summonerId',
-        'region',
         'created_at'
     ];
 
@@ -82,4 +78,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         return parent::toArray();
     }
+
+
+
 }

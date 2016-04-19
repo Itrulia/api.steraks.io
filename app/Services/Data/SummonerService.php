@@ -60,4 +60,21 @@ class SummonerService extends StaticService
 
         return $runePages;
     }
+
+    /**
+     * @param array $champions
+     *
+     * @return array
+     */
+    public function setChampionMastery(array $champions)
+    {
+        foreach($champions as $champion) {
+            list(
+                $champion->championName,
+                $champion->championAvatar
+            ) = $this->getChampionData($champion->championId);
+        }
+
+        return $champions;
+    }
 }

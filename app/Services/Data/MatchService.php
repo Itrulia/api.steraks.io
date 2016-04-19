@@ -8,10 +8,10 @@ class MatchService extends StaticService
         $matchData = json_decode($match->data);
 
         foreach($matchData->participants as $participant) {
-            $participant = $this->setChampionData($participant);
-            $participant = $this->setSummonerSpellData($participant);
-            $participant = $this->setItemData($participant);
-            $participant = $this->setMasteryData($participant);
+            $this->setChampionData($participant);
+            $this->setSummonerSpellData($participant);
+            $this->setItemData($participant);
+            $this->setMasteryData($participant);
         }
 
         $match->data = json_encode($matchData);
@@ -58,6 +58,8 @@ class MatchService extends StaticService
      * @return mixed
      */
     protected function setMasteryData($participant) {
+        if (!isset($participant->masteries)) return $participant;
+
         foreach($participant->masteries as $mastery) {
             list(
                 $mastery->masteryName,

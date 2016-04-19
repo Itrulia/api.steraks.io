@@ -39,6 +39,9 @@ class SummonerRepository extends Repository
             ]);
 
             $res = json_decode($res->getBody());
+            if (is_null($res)) {
+                $res = [];
+            }
             $res = $this->service->setMatches($res);
             $this->cache->put($cacheKey, $res, 1);
 
@@ -153,6 +156,29 @@ class SummonerRepository extends Repository
             ]);
 
             $res = json_decode($res->getBody());
+            $this->cache->put($cacheKey, $res, 15);
+
+            return $res;
+        });
+    }
+
+    /**
+     * @param $summonerId
+     * @param $region
+     *
+     * @return mixed
+     */
+    public function getChampionMastery($summonerId, $region) {
+        $cacheKey = 'summoner:' . $summonerId . ':' . $region . ':championmastery';
+
+        return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
+            $res = $this->client->request('GET', $this->baseurl . '/summoner/' . $summonerId . '/championmastery', [
+                'query' => ['region' => $region]
+            ]);
+
+            $res = json_decode($res->getBody());
+            $res = $this->service->setChampionMastery($res);
+
             $this->cache->put($cacheKey, $res, 15);
 
             return $res;
@@ -284,6 +310,73 @@ class SummonerRepository extends Repository
             $this->cache->put($cacheKey, $champions, 15);
 
             return $champions;
+        });
+    }
+
+    /**
+     * @param $summonerId
+     * @param $region
+     *
+     * @return mixed
+     */
+    public function getFriends($summonerId, $region) {
+        $cacheKey = 'summoner:' . $summonerId . ':' . $region . ':friends';
+
+        return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
+            $games = \DB::table('match_summoner_champion')
+                ->where('summonerId', $summonerId)
+                ->orderBy('matchId', 'DESC')
+                ->limit(20)->get();
+
+            $games = array_map(function ($game) {
+                return $game->matchId;
+            }, $games);
+
+            $games = \DB::table('match_summoner_champion AS t1')
+                ->selectRaw('t1.matchId, t1.summonerId, t1.championId, t1.teamId, t1.winner')
+                ->leftJoin('match_summoner_champion as t2', function (JoinClause $join) use ($summonerId, $games) {
+                    $join->on('t1.matchId', '=', 't2.matchId')
+                        ->on('t1.teamId', '!=', 't2.teamId')
+                        ->where('t2.summonerId', '=', $summonerId);
+                })
+                ->whereIn('t1.matchId', $games)
+                ->where('t1.summonerId', '!=', $summonerId)
+                ->whereNull('t2.matchId')
+                ->get(['winner', 'summonerId', 'matchId']);
+
+            $friends = [];
+            foreach ($games as $game) {
+                /** @var \stdClass $game */
+                if (!isset($friends[$game->summonerId])) {
+                    $friends[$game->summonerId] = [
+                        'summonerId' => $game->summonerId,
+                        'matchIds'   => [],
+                        'games'      => 0,
+                        'wins'       => 0,
+                        'losses'     => 0
+                    ];
+                }
+
+                $friends[$game->summonerId]['matchIds'][] = $game->matchId;
+                $friends[$game->summonerId]['games']++;
+
+                if ($game->winner) {
+                    $friends[$game->summonerId]['wins']++;
+                } else {
+                    $friends[$game->summonerId]['losses']++;
+                }
+
+                $friends[$game->summonerId]['percent'] = $friends[$game->summonerId]['wins']
+                    / $friends[$game->summonerId]['games'];
+            }
+
+            $friends = array_filter($friends, function($friend) {
+                return $friend['games'] >= 2;
+            });
+
+            $this->cache->put($cacheKey, $friends, 15);
+
+            return $friends;
         });
     }
 }

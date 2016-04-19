@@ -32,8 +32,9 @@ Route::group(['prefix' => '{region}'], function () {
         Route::get('runes', 'API\SummonerController@getRunes');
         Route::get('masteries', 'API\SummonerController@getMasteries');
         Route::get('stats', 'API\SummonerController@getStats');
+        Route::get('champions', 'API\SummonerController@getChampionMastery');
 
-        // counter
+        Route::get('friends', 'API\SummonerController@friends');
         Route::get('counters', 'API\SummonerController@counters');
         Route::get('synergy', 'API\SummonerController@synergy');
     });

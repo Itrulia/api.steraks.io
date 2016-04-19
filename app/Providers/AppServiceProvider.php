@@ -22,7 +22,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
+        Validator::extend('region', function($attribute, $value, $parameters, $validator) {
+            return in_array($value, [
+                'br',
+                'eune',
+                'euw',
+                'jp',
+                'kr',
+                'lan',
+                'las',
+                'na',
+                'oce',
+                'ru',
+                'tr'
+            ]);
+        });
     }
 
     /**

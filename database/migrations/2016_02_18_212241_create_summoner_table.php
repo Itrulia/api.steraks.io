@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSummonerUserPivotTable extends Migration
+class CreateSummonerTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,14 @@ class CreateSummonerUserPivotTable extends Migration
      */
     public function up()
     {
-        Schema::create('summoner_user', function (Blueprint $table) {
+        Schema::create('summoners', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('region', 5);
             $table->integer('summonerId')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->primary(['summonerId', 'user_id']);
+            $table->unique('summonerId');
+            $table->timestamps();
         });
     }
 
@@ -27,6 +30,6 @@ class CreateSummonerUserPivotTable extends Migration
      */
     public function down()
     {
-        Schema::drop('summoner_user');
+        Schema::drop('summoners');
     }
 }

@@ -1,9 +1,9 @@
-<?php namespace App\Http\Requests\Auth;
+<?php namespace App\Http\Requests\Follower;
 
 use App\Http\Requests\Request;
 use Auth;
 
-class RegisterRequest extends Request
+class UnFollow extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -12,7 +12,7 @@ class RegisterRequest extends Request
      */
     public function authorize()
     {
-        return !Auth::check();
+        return Auth::check();
     }
 
     /**
@@ -23,8 +23,8 @@ class RegisterRequest extends Request
     public function rules()
     {
         return [
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:4',
+            'summonerId' => 'required|exists:summoners,summonerId',
+            'region'     => 'required|region',
         ];
     }
 }

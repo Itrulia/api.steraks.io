@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -60,12 +61,12 @@ class Handler extends ExceptionHandler
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function renderExceptionWithWhoops(Exception $e)
+    protected function renderExceptionWithWhoops(Exception $e, $status, array $headers)
     {
         $whoops = new Run;
         $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
 
-        return response($whoops->handleException($e));
+        return response($whoops->handleException($e), $status, $headers);
     }
 
     /**
@@ -75,6 +76,7 @@ class Handler extends ExceptionHandler
      * @param  \Exception $e
      *
      * @return \Illuminate\Http\Response
+     * @throws \App\Exceptions\RateLimitException
      */
     public function render($request, Exception $e)
     {
@@ -84,6 +86,15 @@ class Handler extends ExceptionHandler
             'Access-Control-Allow-Headers'  => 'Content-Type, X-Auth-Token, Origin',
             'Access-Control-Expose-Headers' => 'X-Auth-Token'
         ];
+
+        if ($e instanceof ClientException) {
+            switch($e->getCode()) {
+                case 404:
+                    throw new NotFoundHttpException($e->getMessage(), $e);
+                case 429:
+                    throw new RateLimitException($e->getMessage(), $e);
+            }
+        }
 
         if ($e instanceof TokenExpiredException) {
             return response()->json([
@@ -101,7 +112,7 @@ class Handler extends ExceptionHandler
             ], $e->getStatusCode(), $headers);
         }
 
-        if ($e instanceof NotFoundHttpException) {
+        if ($e instanceof NotFoundHttpException || $e instanceof ModelNotFoundException) {
             return response()->json([
                 'message' => 'He is dead Jim, the link is dead!',
                 'error' => 'not_found',
@@ -133,12 +144,16 @@ class Handler extends ExceptionHandler
             ], 403, $headers);
         }
 
-        if ($e instanceof ModelNotFoundException) {
-            $e = new NotFoundHttpException($e->getMessage(), $e, $headers);
+        if ($e instanceof RateLimitException) {
+            return response()->json([
+                'message' => 'You start being clingy.',
+                'error' => 'rate_exceeded',
+                'statuscode' => 429
+            ], 429, $headers);
         }
 
         if (config('app.debug') && !request()->ajax()) {
-            return $this->renderExceptionWithWhoops($e);
+            return $this->renderExceptionWithWhoops($e, 500, $headers);
         }
 
         return response()->json([

@@ -17,7 +17,7 @@ class CreateMatchTable extends Migration
             $table->bigInteger('timestamp');
             $table->integer('winner');
             $table->string('season');
-            $table->string('region');
+            $table->string('region', 5);
             $table->string('version');
 
             $table->primary(['matchId', 'region']);
