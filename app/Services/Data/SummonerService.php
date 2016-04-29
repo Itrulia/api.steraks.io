@@ -77,4 +77,15 @@ class SummonerService extends StaticService
 
         return $champions;
     }
+
+    /**
+     * @param $summoner
+     *
+     * @return mixed
+     */
+    public function setSummonerIcon($summoner) {
+        $summoner->iconAvatar = $this->getSummonerIconData($summoner->profileIconId);
+
+        return $summoner;
+    }
 }

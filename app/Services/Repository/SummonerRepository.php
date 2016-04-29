@@ -156,6 +156,15 @@ class SummonerRepository extends Repository
             ]);
 
             $res = json_decode($res->getBody());
+
+            if (count(explode(',', $summonerId)) > 1) {
+                foreach(get_object_vars($res) as $id => $value) {
+                    $res->$id = $this->service->setSummonerIcon($res->$id);
+                }
+            } else {
+                $res = $this->service->setSummonerIcon($res);
+            }
+
             $this->cache->put($cacheKey, $res, 15);
 
             return $res;

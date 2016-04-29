@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Auth;
+use Hash;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 
 /**
@@ -68,6 +69,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $with = [];
 
     /**
+     * @param string $aAttribute
+     */
+    protected function setPasswordAttribute($aAttribute) {
+        if (Hash::needsRehash($aAttribute)) {
+            $aAttribute = Hash::make($aAttribute);
+        }
+        $this->attributes['password'] = $aAttribute;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -78,7 +89,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         return parent::toArray();
     }
-
-
-
 }

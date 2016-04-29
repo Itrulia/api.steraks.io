@@ -35,6 +35,11 @@ class StaticService
     protected $summonerSpellData;
 
     /**
+     * @var \stdClass
+     */
+    protected $summonerIconData;
+
+    /**
      * @var \App\Services\Repository\StaticRepository
      */
     protected $repository;
@@ -141,6 +146,14 @@ class StaticService
         }
 
         return [null, null];
+    }
+
+    public function getSummonerIconData($iconId) {
+        if (is_null($this->realmData)) {
+            $this->realmData = $this->repository->getRealm();
+        }
+
+        return $this->realmData->cdn . '/' . $this->realmData->dd . '/img/profileicon/' . $iconId . '.png';
     }
 
     public function getItemData($itemId) {
