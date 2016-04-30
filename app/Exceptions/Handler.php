@@ -20,12 +20,12 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        HttpException::class,
-        ModelNotFoundException::class,
-        UnauthorizedException::class,
-        UnauthenticatedException::class,
-        TokenExpiredException::class,
-        TokenInvalidException::class,
+//        HttpException::class,
+//        ModelNotFoundException::class,
+//        UnauthorizedException::class,
+//        UnauthenticatedException::class,
+//        TokenExpiredException::class,
+//        TokenInvalidException::class,
     ];
 
     /**
