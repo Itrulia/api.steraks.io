@@ -2,6 +2,16 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Summoner
+ *
+ * @property integer $id
+ * @property string $region
+ * @property integer $summonerId
+ * @property integer $user_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class Summoner extends Model
 {
     /**
