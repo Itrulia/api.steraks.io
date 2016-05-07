@@ -10,7 +10,7 @@ class StaticRepository extends Repository
      * @return mixed
      */
     public function getChampions() {
-        $cacheKey = 'static:champions';
+        $cacheKey = "static:champions";
         $cache = $this->cache;
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
@@ -29,7 +29,7 @@ class StaticRepository extends Repository
      * @return mixed
      */
     public function getRunes() {
-        $cacheKey = 'static:runes';
+        $cacheKey = "static:runes";
         $cache = $this->cache;
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
@@ -48,7 +48,7 @@ class StaticRepository extends Repository
      * @return mixed
      */
     public function getMasteries() {
-        $cacheKey = 'static:masteries';
+        $cacheKey = "static:masteries";
         $cache = $this->cache;
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
@@ -64,14 +64,16 @@ class StaticRepository extends Repository
     }
 
     /**
+     * @param $version
+     *
      * @return mixed
      */
-    public function getItems() {
-        $cacheKey = 'static:items';
+    public function getItems($version) {
+        $cacheKey = "static:items:{$version}";
         $cache = $this->cache;
 
-        return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
-            $res = $this->client->request('GET', $this->baseurl . '/static/item', [
+        return $this->cache->get($cacheKey, function() use($cacheKey, $cache, $version) {
+            $res = $this->client->request('GET', $this->baseurl . "/static/item/{$version}", [
                 'query' => ['region' => 'EUW']
             ]);
 
@@ -86,7 +88,7 @@ class StaticRepository extends Repository
      * @return mixed
      */
     public function getSummonerSpells() {
-        $cacheKey = 'static:summoner-spells';
+        $cacheKey = "static:summoner-spells";
         $cache = $this->cache;
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
@@ -105,11 +107,30 @@ class StaticRepository extends Repository
      * @return mixed
      */
     public function getRealm() {
-        $cacheKey = 'static:realm';
+        $cacheKey = "static:realm";
         $cache = $this->cache;
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
             $res = $this->client->request('GET', $this->baseurl . '/static/realm', [
+                'query' => ['region' => 'EUW']
+            ]);
+
+            $res = json_decode($res->getBody());
+            $cache->put($cacheKey, $res, 60*24);
+
+            return $res;
+        });
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVersions() {
+        $cacheKey = "static:versions";
+        $cache = $this->cache;
+
+        return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
+            $res = $this->client->request('GET', $this->baseurl . '/static/versions', [
                 'query' => ['region' => 'EUW']
             ]);
 

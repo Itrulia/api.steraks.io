@@ -18,7 +18,7 @@ class MatchController extends Controller
         foreach($matchData->participants as $participant) {
             unset($participant->runes);
 
-            if ($participant->player->summonerId != $summonerId) {
+            if (isset($participant->player) && $participant->player->summonerId != $summonerId) {
                 unset($participant->stats);
                 unset($participant->timeline);
             }

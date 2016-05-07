@@ -53,6 +53,13 @@ class StaticService
     }
 
     /**
+     * @return mixed
+     */
+    protected function getRealmData() {
+        return $this->repository->getRealm();
+    }
+
+    /**
      * @param $championId
      *
      * @return array
@@ -60,7 +67,7 @@ class StaticService
     public function getChampionData($championId)
     {
         if (is_null($this->realmData)) {
-            $this->realmData = $this->repository->getRealm();
+            $this->realmData = $this->getRealmData();
         }
 
         if (is_null($this->champData)) {
@@ -85,7 +92,7 @@ class StaticService
     public function getMasteryData($masteryId)
     {
         if (is_null($this->realmData)) {
-            $this->realmData = $this->repository->getRealm();
+            $this->realmData = $this->getRealmData();
         }
 
         if (is_null($this->masteryData)) {
@@ -111,7 +118,7 @@ class StaticService
     public function getRuneData($runeId)
     {
         if (is_null($this->realmData)) {
-            $this->realmData = $this->repository->getRealm();
+            $this->realmData = $this->getRealmData();
         }
 
         if (is_null($this->runeData)) {
@@ -131,7 +138,7 @@ class StaticService
 
     public function getSummonerSpellData($spellId) {
         if (is_null($this->realmData)) {
-            $this->realmData = $this->repository->getRealm();
+            $this->realmData = $this->getRealmData();
         }
 
         if (is_null($this->summonerSpellData)) {
@@ -150,7 +157,7 @@ class StaticService
 
     public function getSummonerIconData($iconId) {
         if (is_null($this->realmData)) {
-            $this->realmData = $this->repository->getRealm();
+            $this->realmData = $this->getRealmData();
         }
 
         return $this->realmData->cdn . '/' . $this->realmData->dd . '/img/profileicon/' . $iconId . '.png';
@@ -158,11 +165,11 @@ class StaticService
 
     public function getItemData($itemId) {
         if (is_null($this->realmData)) {
-            $this->realmData = $this->repository->getRealm();
+            $this->realmData = $this->getRealmData();
         }
 
         if (is_null($this->itemData)) {
-            $this->itemData = $this->repository->getItems();
+            $this->itemData = $this->repository->getItems($this->realmData->dd);
         }
 
         if (isset($this->itemData->$itemId)) {

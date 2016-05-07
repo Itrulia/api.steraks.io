@@ -108,7 +108,7 @@ class MatchRepository extends Repository
         }
 
         $matches->each(function(Match $match) {
-            $match = $this->service->setMatch($match);
+            $this->service->setMatch($match);
         });
 
         if (count($matchIds) === 1) {

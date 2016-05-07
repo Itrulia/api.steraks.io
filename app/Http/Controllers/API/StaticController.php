@@ -24,7 +24,7 @@ class StaticController extends Controller
      */
     public function getItems(StaticRepository $repository)
     {
-        return response()->json($repository->getItems());
+        return response()->json($repository->getItems($repository->getRealm()->dd));
     }
 
     /**

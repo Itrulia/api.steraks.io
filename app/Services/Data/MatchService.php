@@ -4,8 +4,39 @@ use App\Match;
 
 class MatchService extends StaticService
 {
+    /**
+     * @var string
+     */
+    private $version;
+
+    private function setVersion($version)
+    {
+        $parts = explode('.', $version);
+        $version = $parts[0] . '.' . $parts[1];
+        $this->version = $version;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getRealmData() {
+        $realm = $this->repository->getRealm();
+        $versions = $this->repository->getVersions();
+
+        $match = array_filter($versions, function($version) {
+            return strpos($version, $this->version) !== false;
+        });
+
+        if (count($match) >= 1) {
+            $realm->dd = array_shift($match);
+        }
+
+        return $realm;
+    }
+
     public function setMatch(Match $match) {
         $matchData = json_decode($match->data);
+        $this->setVersion($matchData->matchVersion);
 
         foreach($matchData->participants as $participant) {
             $this->setChampionData($participant);
@@ -80,9 +111,9 @@ class MatchService extends StaticService
         $items = [];
         $itemKeys = ['item0', 'item1', 'item2', 'item3', 'item4', 'item5', 'item6'];
 
-        foreach($itemKeys as $itemName) {
+        foreach($itemKeys as $itemKey) {
             $item = new \stdClass();
-            $item->itemId = $participant->stats->$itemName;
+            $item->itemId = $participant->stats->$itemKey;
 
             list(
                 $item->itemName,
