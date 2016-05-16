@@ -15,7 +15,9 @@ class StaticRepository extends Repository
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
             $res = $this->client->request('GET', $this->baseurl . '/static/champion', [
-                'query' => ['region' => 'EUW']
+                'query' => ['region' => 'EUW'],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
@@ -34,7 +36,9 @@ class StaticRepository extends Repository
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
             $res = $this->client->request('GET', $this->baseurl . '/static/rune', [
-                'query' => ['region' => 'EUW']
+                'query' => ['region' => 'EUW'],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
@@ -53,7 +57,9 @@ class StaticRepository extends Repository
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
             $res = $this->client->request('GET', $this->baseurl . '/static/mastery', [
-                'query' => ['region' => 'EUW']
+                'query' => ['region' => 'EUW'],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
@@ -74,7 +80,9 @@ class StaticRepository extends Repository
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache, $version) {
             $res = $this->client->request('GET', $this->baseurl . "/static/item/{$version}", [
-                'query' => ['region' => 'EUW']
+                'query' => ['region' => 'EUW'],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
@@ -93,7 +101,9 @@ class StaticRepository extends Repository
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
             $res = $this->client->request('GET', $this->baseurl . '/static/summoner-spell', [
-                'query' => ['region' => 'EUW']
+                'query' => ['region' => 'EUW'],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
@@ -112,7 +122,9 @@ class StaticRepository extends Repository
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
             $res = $this->client->request('GET', $this->baseurl . '/static/realm', [
-                'query' => ['region' => 'EUW']
+                'query' => ['region' => 'EUW'],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
@@ -131,7 +143,9 @@ class StaticRepository extends Repository
 
         return $this->cache->get($cacheKey, function() use($cacheKey, $cache) {
             $res = $this->client->request('GET', $this->baseurl . '/static/versions', [
-                'query' => ['region' => 'EUW']
+                'query' => ['region' => 'EUW'],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());

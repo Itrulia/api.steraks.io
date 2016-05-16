@@ -5,6 +5,7 @@ use App\Services\Data\MatchService;
 use GuzzleHttp\Client;
 use Illuminate\Cache\Repository as Cache;
 use Illuminate\Database\Eloquent\Collection;
+use DB;
 
 class MatchRepository extends Repository
 {
@@ -35,29 +36,38 @@ class MatchRepository extends Repository
             return $team->winner;
         }))[0]->teamId;
 
-        $match = Match::create([
-            'matchId'   => $data->matchId,
-            'region'    => $data->region,
-            'timestamp' => $data->matchCreation,
-            'version'   => $data->matchVersion,
-            'season'    => $data->season,
-            'winner'    => $winner,
-            'data'      => json_encode($data)
-        ]);
+        $match = null;
 
-        $relations = [];
-        foreach ($data->participants as $participant) {
-            $relations[] = [
-                'summonerId' => $participant->player->summonerId,
-                'championId' => $participant->championId,
-                'teamId'     => $participant->teamId,
-                'matchId'    => $data->matchId,
-                'winner'     => $winner == $participant->teamId,
-                'region'     => $data->region,
-            ];
-        }
+        DB::transaction(function() use ($data, $winner, &$match) {
+            $match = Match::create([
+                'matchId'   => $data->matchId,
+                'region'    => $data->region,
+                'timestamp' => $data->matchCreation,
+                'version'   => $data->matchVersion,
+                'season'    => $data->season,
+                'winner'    => $winner,
+                'data'      => json_encode($data)
+            ]);
 
-        \DB::table('match_summoner_champion')->insert($relations);
+            $relations = [];
+            foreach ($data->participants as $participant) {
+                $model = [
+                    'championId' => $participant->championId,
+                    'teamId'     => $participant->teamId,
+                    'matchId'    => $data->matchId,
+                    'winner'     => $winner == $participant->teamId,
+                    'region'     => $data->region,
+                ];
+
+                if (isset($participant->player)) { // in case its anonymous somehow?
+                    $model['summonerId'] = $participant->player->summonerId;
+                }
+
+                $relations[] = $model;
+            }
+
+            DB::table('match_summoner_champion')->insert($relations);
+        });
 
         return $match;
     }
@@ -89,7 +99,9 @@ class MatchRepository extends Repository
         // and then reorder the collection
         if (count($missingMatches) > 0) {
             $res = $this->client->request('GET', $this->baseurl . '/match/' . implode(',', $missingMatches), [
-                'query' => ['region' => $region]
+                'query' => ['region' => $region],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());

@@ -35,7 +35,9 @@ class SummonerRepository extends Repository
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
             $res = $this->client->request('GET', $this->baseurl . '/summoner/' . $summonerId . '/matches', [
-                'query' => ['region' => $region]
+                'query' => ['region' => $region],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
@@ -61,13 +63,15 @@ class SummonerRepository extends Repository
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
             $res = $this->client->request('GET', $this->baseurl . '/summoner/' . $summonerId . '/runes', [
-                'query' => ['region' => $region]
+                'query' => ['region' => $region],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
             $this->service->setRunes($res);
 
-            $this->cache->put($cacheKey, $res, 15);
+            $this->cache->put($cacheKey, $res, 60 * 24);
 
             return $res;
         });
@@ -85,11 +89,13 @@ class SummonerRepository extends Repository
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
             $res = $this->client->request('GET', $this->baseurl . '/summoner/' . $summonerId . '/masteries', [
-                'query' => ['region' => $region]
+                'query' => ['region' => $region],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
-            $this->cache->put($cacheKey, $res, 15);
+            $this->cache->put($cacheKey, $res, 60 * 24);
 
             return $res;
         });
@@ -107,11 +113,13 @@ class SummonerRepository extends Repository
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
             $res = $this->client->request('GET', $this->baseurl . '/summoner/' . $summonerId . '/rank', [
-                'query' => ['region' => $region]
+                'query' => ['region' => $region],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
-            $this->cache->put($cacheKey, $res, 15);
+            $this->cache->put($cacheKey, $res, 60);
 
             return $res;
         });
@@ -129,12 +137,14 @@ class SummonerRepository extends Repository
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
             $res = $this->client->request('GET', $this->baseurl . '/summoner/' . $summonerId . '/stats', [
-                'query' => ['region' => $region]
+                'query' => ['region' => $region],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
             $res = $this->service->setStats($res);
-            $this->cache->put($cacheKey, $res, 15);
+            $this->cache->put($cacheKey, $res, 60 * 24);
 
             return $res;
         });
@@ -152,7 +162,9 @@ class SummonerRepository extends Repository
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
             $res = $this->client->request('GET', $this->baseurl . '/summoner/' . $summonerId, [
-                'query' => ['region' => $region]
+                'query' => ['region' => $region],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
@@ -165,7 +177,7 @@ class SummonerRepository extends Repository
                 $res = $this->service->setSummonerIcon($res);
             }
 
-            $this->cache->put($cacheKey, $res, 15);
+            $this->cache->put($cacheKey, $res, 60 * 24);
 
             return $res;
         });
@@ -182,13 +194,15 @@ class SummonerRepository extends Repository
 
         return $this->cache->get($cacheKey, function () use ($cacheKey, $summonerId, $region) {
             $res = $this->client->request('GET', $this->baseurl . '/summoner/' . $summonerId . '/championmastery', [
-                'query' => ['region' => $region]
+                'query' => ['region' => $region],
+                'connect_timeout' => 5,
+                'timeout' => 10,
             ]);
 
             $res = json_decode($res->getBody());
             $res = $this->service->setChampionMastery($res);
 
-            $this->cache->put($cacheKey, $res, 15);
+            $this->cache->put($cacheKey, $res, 60 * 24);
 
             return $res;
         });
@@ -213,7 +227,7 @@ class SummonerRepository extends Repository
             }, $games);
 
             $games = \DB::table('match_summoner_champion AS t1')
-                ->selectRaw('t1.matchId, t1.summonerId, t1.championId, t1.teamId, t1.winner')
+                ->selectRaw('t1.matchId, t1.summonerId, t1.championId, t1.teamId, t1.winner, t1.region')
                 ->leftJoin('match_summoner_champion as t2', function (JoinClause $join) use ($summonerId, $games) {
                     $join->on('t1.matchId', '=', 't2.matchId')
                         ->on('t1.teamId', '=', 't2.teamId')
@@ -229,7 +243,7 @@ class SummonerRepository extends Repository
                 if (!isset($champions[$game->championId])) {
                     $champions[$game->championId] = [
                         'championId' => $game->championId,
-                        'matchIds'   => [],
+                        'matches'   => [],
                         'games'      => 0,
                         'wins'       => 0,
                         'losses'     => 0
@@ -238,7 +252,7 @@ class SummonerRepository extends Repository
                     list($champions[$game->championId]['championName'], $champions[$game->championId]['championAvatar']) = $this->service->getChampionData($game->championId);
                 }
 
-                $champions[$game->championId]['matchIds'][] = $game->matchId;
+                $champions[$game->championId]['matches'][] = ['matchId' => $game->matchId, 'region' => $game->region];
                 $champions[$game->championId]['games']++;
 
                 if (!$game->winner) {
@@ -252,7 +266,7 @@ class SummonerRepository extends Repository
             }
 
 
-            $this->cache->put($cacheKey, $champions, 15);
+            $this->cache->put($cacheKey, $champions, 60 * 24);
 
             return $champions;
         });
@@ -277,7 +291,7 @@ class SummonerRepository extends Repository
             }, $games);
 
             $games = \DB::table('match_summoner_champion AS t1')
-                ->selectRaw('t1.matchId, t1.summonerId, t1.championId, t1.teamId, t1.winner')
+                ->selectRaw('t1.matchId, t1.summonerId, t1.championId, t1.teamId, t1.winner, t1.region')
                 ->leftJoin('match_summoner_champion as t2', function (JoinClause $join) use ($summonerId, $games) {
                     $join->on('t1.matchId', '=', 't2.matchId')
                         ->on('t1.teamId', '!=', 't2.teamId')
@@ -294,7 +308,7 @@ class SummonerRepository extends Repository
                 if (!isset($champions[$game->championId])) {
                     $champions[$game->championId] = [
                         'championId' => $game->championId,
-                        'matchIds'   => [],
+                        'matches'   => [],
                         'games'      => 0,
                         'wins'       => 0,
                         'losses'     => 0
@@ -303,7 +317,7 @@ class SummonerRepository extends Repository
                     list($champions[$game->championId]['championName'], $champions[$game->championId]['championAvatar']) = $this->service->getChampionData($game->championId);
                 }
 
-                $champions[$game->championId]['matchIds'][] = $game->matchId;
+                $champions[$game->championId]['matches'][] = ['matchId' => $game->matchId, 'region' => $game->region];
                 $champions[$game->championId]['games']++;
 
                 if ($game->winner) {
@@ -316,7 +330,7 @@ class SummonerRepository extends Repository
                     / $champions[$game->championId]['games'];
             }
 
-            $this->cache->put($cacheKey, $champions, 15);
+            $this->cache->put($cacheKey, $champions, 60 * 24);
 
             return $champions;
         });
@@ -342,7 +356,7 @@ class SummonerRepository extends Repository
             }, $games);
 
             $games = \DB::table('match_summoner_champion AS t1')
-                ->selectRaw('t1.matchId, t1.summonerId, t1.championId, t1.teamId, t1.winner')
+                ->selectRaw('t1.matchId, t1.summonerId, t1.championId, t1.teamId, t1.winner, t1.region')
                 ->leftJoin('match_summoner_champion as t2', function (JoinClause $join) use ($summonerId, $games) {
                     $join->on('t1.matchId', '=', 't2.matchId')
                         ->on('t1.teamId', '!=', 't2.teamId')
@@ -359,14 +373,14 @@ class SummonerRepository extends Repository
                 if (!isset($friends[$game->summonerId])) {
                     $friends[$game->summonerId] = [
                         'summonerId' => $game->summonerId,
-                        'matchIds'   => [],
+                        'matches'   => [],
                         'games'      => 0,
                         'wins'       => 0,
                         'losses'     => 0
                     ];
                 }
 
-                $friends[$game->summonerId]['matchIds'][] = $game->matchId;
+                $friends[$game->summonerId]['matches'][] = ['matchId' => $game->matchId, 'region' => $game->region];
                 $friends[$game->summonerId]['games']++;
 
                 if ($game->winner) {
@@ -383,7 +397,7 @@ class SummonerRepository extends Repository
                 return $friend['games'] >= 2;
             });
 
-            $this->cache->put($cacheKey, $friends, 15);
+            $this->cache->put($cacheKey, $friends, 60 * 24);
 
             return $friends;
         });
